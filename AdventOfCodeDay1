@@ -1,0 +1,111 @@
+using System;
+using System.Collections.Generic;
+using System.Security;
+
+class Program
+{
+    static void Main()
+    {
+
+        string filePath = "C:\\Users\\meierf\\source\\repos\\ConsoleApp1\\ConsoleApp1\\Input.txt";
+        int lineNumber = 0;
+        List<int> checkNumbers = new List<int>();
+        int ergebnisPW = 0;
+        int actualPosition = 50;
+        int currentLine = 0;
+        char rotationDirection = 'x';
+        int rotationNumber = 0;
+        int zeroCounter = 0;
+
+        try
+        {
+            using (StreamReader sr = new StreamReader(filePath))
+            {
+
+                lineNumber = File.ReadLines(filePath).Count();
+
+                Console.WriteLine($"LineNumbers: {lineNumber}");
+
+                for (int i = currentLine; currentLine < lineNumber; currentLine++)
+                {
+                    string line = File.ReadLines(filePath).ElementAt(currentLine);
+                    rotationDirection = line[0];
+                    string rotationNumberString = line.Remove(0, 1);
+
+
+                    if (rotationNumberString.Length > 2)
+                    {
+                        zeroCounter = Int32.Parse(rotationNumberString.Substring(0, rotationNumberString.Length - 2));
+                        ergebnisPW = ergebnisPW + zeroCounter;
+                        Console.WriteLine("Rotation >100: " + zeroCounter + "  addtoErgebnis: " + ergebnisPW );
+                        rotationNumber = Int32.Parse(rotationNumberString.Remove(0, rotationNumberString.Length - 2));
+
+                    }
+                    else
+                    {
+                        rotationNumber = Int32.Parse(rotationNumberString);
+                    }
+
+                    if (rotationDirection == 'L')
+                    {
+                        int rotate = actualPosition - rotationNumber;
+                        if (rotate < 0)
+                        {
+                            if (actualPosition == 0)
+                            {
+                                actualPosition = 100 - (rotate * -1);
+                                Console.WriteLine("Rotation Left: " + rotationNumber + "  toPosition: " + actualPosition);
+                            }
+                            else
+                            {
+                                actualPosition = 100 - (rotate * -1);
+                                ergebnisPW++;
+                                Console.WriteLine("Rotation Left: " + rotationNumber + "  toPosition: " + actualPosition + "; 0 getroffen: " + ergebnisPW);
+                            }
+                        }
+                        else
+                        {
+                            if (rotate == 0)
+                            {
+                                actualPosition = 0;
+                                ergebnisPW++;
+                                Console.WriteLine("Rotation Left: " + rotationNumber + "  toPosition: " + actualPosition + "; 0 getroffen: " + ergebnisPW);
+                            }
+                            else
+                            {
+                                actualPosition = rotate;
+                                Console.WriteLine("Rotation Left: " + rotationNumber + "  toPosition: " + actualPosition);
+                            }
+                        }
+                    }
+                    else if (rotationDirection == 'R')
+                    {
+                        int rotate = actualPosition + rotationNumber;
+                        if (rotate > 100)
+                        {
+                            actualPosition = rotate - 100;
+                            ergebnisPW++;
+                            Console.WriteLine("Rotation Right: " + rotationNumber + "  toPosition: " + actualPosition + "; 0 getroffen: " + ergebnisPW);
+                        }
+                        else if (rotate == 100)
+                        {
+                            actualPosition = 0;
+                            ergebnisPW++;
+                            Console.WriteLine("Rotation Left: " + rotationNumber + "  toPosition: " + actualPosition + "; 0 getroffen: " + ergebnisPW);
+                        }
+                        else
+                        {
+                            actualPosition = rotate;
+                            Console.WriteLine("Rotation Right: " + rotationNumber + "  toPosition: " + actualPosition);
+                        }
+                    }
+                }
+                Console.WriteLine("Password:" + ergebnisPW);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Fehler: " + e.Message);
+        }
+    }
+}
