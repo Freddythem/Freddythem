@@ -8,7 +8,7 @@ class Program
     static void Main()
     {
 
-        string filePath = "C:\\Users\\meierf\\source\\repos\\ConsoleApp1\\ConsoleApp1\\InputTest.txt";
+        string filePath = "E:\\04_Programmierung\\AdventOfCode2025\\Input.txt";
 
         long resultInvalidIds = 0;
         string checkId = "101";
@@ -23,7 +23,7 @@ class Program
                 string IdBlocks = sr.ReadLine();
 
                 string[] checkBlock = IdBlocks.Split(",");
-                //Console.WriteLine($"Idlock: {IdBlocks}");
+                Console.WriteLine($"Idlock: {IdBlocks}");
 
                 for (int i = 0; i < checkBlock.Length; i++)
                 {
@@ -31,49 +31,115 @@ class Program
                     long startId = long.Parse(checkBlockIds[0]);
                     long endId = long.Parse(checkBlockIds[1]);
                     long actualId = startId;
+                    bool idChecked = false;
 
-                    //Console.WriteLine($"StartID: {startId}");
                     for (long j = actualId; actualId <= endId; actualId++)
                     {
+                        idChecked = false;
                         checkId = actualId.ToString();
+                        int checkIdLength = checkId.Length;                   
 
-                        int counter = 1;
-
-                        while (counter < checkId.Length -1)
+                        if(checkIdLength < 2)
                         {
-                            teilLinks = checkId.Substring(0, counter);
-                            teilRechts = checkId.Substring(counter, counter);
+                            Console.WriteLine($"checkIdLength to small: {checkId}");
+                            idChecked = true;
+                        }
+
+                        if (!idChecked && checkId.Substring(0, 1) == checkId.Substring(1, 1)) 
+                        {
+                            for (int m = 1; m < checkIdLength; m++)
+                            {
+                                if (checkId.Substring(0, 1) == checkId.Substring(m, 1))
+                                {
+                                    idChecked = true;
+                                }
+                                else
+                                {
+                                    idChecked = false;
+                                    break;
+                                }
+                            }
+                            
+                            if(idChecked)
+                            {
+                                resultInvalidIds += long.Parse(checkId);
+                                Console.WriteLine($"invalid ID because of same number: {checkId}");
+                            }
+                        }
+
+                        if (!idChecked && checkIdLength % 3 == 0 && checkIdLength % 2 != 0 && checkIdLength > 3)
+                        {
+                            for (int m = 3; m < checkIdLength; m += 3)
+                            {
+                                if (checkId.Substring(0, 3) == checkId.Substring(m, 3))
+                                {
+                                    idChecked = true;
+                                }
+                                else
+                                {
+                                    idChecked = false;
+                                    break;
+                                }
+                            }
+                            if (!idChecked)
+                            {
+                                int calculate = checkIdLength / 3;
+                                for (int m = calculate; calculate < checkIdLength; calculate += checkIdLength / 3)
+                                {
+                                    if (checkId.Substring(0, checkIdLength / 3) == checkId.Substring(calculate, checkIdLength / 3))
+                                    {
+                                        idChecked = true;
+                                    }
+                                    else
+                                    {
+                                        idChecked = false;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (idChecked)
+                            {
+                                resultInvalidIds += long.Parse(checkId);
+                                Console.WriteLine($"Modulo3 invalid ID: {checkId}");
+                            }
+                        }
+                        
+                        if (!idChecked && checkIdLength > 2 && checkIdLength % 2 == 0)
+                        {
+                            teilLinks = checkId.Substring(0, checkIdLength / 2);
+                            teilRechts = checkId.Substring(checkIdLength / 2, checkIdLength / 2);
 
                             if (teilLinks == teilRechts)
                             {
-                                Console.WriteLine($"checkId: {checkId} , teilLinks: {teilLinks}, teilRechts: {teilRechts}");
+                                resultInvalidIds += long.Parse(checkId);
+                                Console.WriteLine($"Modulo2: Invalid ID: {checkId} , teilLinks: {teilLinks}, teilRechts: {teilRechts}, zwischensumme: {resultInvalidIds}");
+                                idChecked = true;
                             }
                             else
-                            {
-
+                            {                               
+                                for (int m = 2; m < checkIdLength; m += 2)
+                                {
+                                    if (checkId.Substring(0, 2) == checkId.Substring(m, 2))
+                                    {
+                                        idChecked = true;
+                                    }
+                                    else
+                                    {
+                                        idChecked = false;
+                                        break;
+                                    }
+                                }
+                                if (idChecked)
+                                {
+                                    resultInvalidIds += long.Parse(checkId);
+                                    Console.WriteLine($"Modulo2 invalid ID: {checkId}");
+                                }
                             }
-                                    
-
-                            counter++;
                         }
-                        counter = 1;
-
-                        //while (teilLinks == teilRechts)
-                        //{
-                        //    Console.WriteLine($"While-Schleife: checkID: {checkId} , teilLinks: {teilLinks}, teilRechts: {teilRechts}");
-                        //    counter = +1;
-                        //    teilLinks = checkId.Substring(0, counter);
-                        //    teilRechts = checkId.Substring(counter  , counter);
-                        //}
-
-
                     }
-                    //Console.WriteLine($"EndID: {endId} ");
-
                 }
-
-
-                Console.WriteLine("Password:" + resultInvalidIds);
+                    Console.WriteLine("Password:" + resultInvalidIds);
             }
         }
         catch (Exception e)
