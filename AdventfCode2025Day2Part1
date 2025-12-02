@@ -1,0 +1,75 @@
+using System;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Security;
+
+class Program
+{
+    static void Main()
+    {
+
+        string filePath = "C:\\Users\\meierf\\source\\repos\\ConsoleApp1\\ConsoleApp1\\Input.txt";
+
+        long resultInvalidIds = 0;
+        string checkId = "101";
+        string teilLinks;
+        string teilRechts;
+
+
+        try
+        {
+            using (StreamReader sr = new StreamReader(filePath))
+            {
+                string IdBlocks = sr.ReadLine();
+
+                string[] checkBlock = IdBlocks.Split(",");
+                Console.WriteLine($"Idlock: {IdBlocks}");
+
+                for (int i = 0; i < checkBlock.Length ;i++)
+                {
+                    string[] checkBlockIds = checkBlock[i].Split("-");
+                    long startId = long.Parse(checkBlockIds[0]);
+                    long endId = long.Parse(checkBlockIds[1]);
+                    long actualId = startId;
+
+                    //Console.WriteLine($"StartID: {startId}");
+                    for (long j = actualId; actualId <= endId; actualId++)
+                    {
+                        //Console.WriteLine($"ActualId: {actualId}");
+                        if (actualId.ToString().Length % 2 == 0)
+                        {
+                            checkId = actualId.ToString();
+                            teilLinks = checkId.Substring(0, checkId.Length / 2);
+                            teilRechts = checkId.Substring(checkId.Length / 2, checkId.Length / 2);
+                            //Console.WriteLine("CheckingStrings:" + teilLinks + ", " + teilRechts);
+
+                            if (teilLinks == teilRechts)
+                            {
+                                resultInvalidIds += long.Parse(checkId);
+                                Console.WriteLine($"Invalid ID: {checkId} , teilLinks: {teilLinks}, teilRechts: {teilRechts}, zwischensumme: {resultInvalidIds}");
+                            }
+                            else
+                            {
+                                //Console.WriteLine($"ID {checkId} correct");
+                            }
+
+                        }
+                        else
+                        {
+                            //Console.WriteLine($"ID {actualId} correct");
+                        }
+                    }
+                    //Console.WriteLine($"EndID: {endId} ");
+
+                }
+
+
+                Console.WriteLine("Password:" + resultInvalidIds);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Fehler: " + e.Message);
+        }
+    }
+}
