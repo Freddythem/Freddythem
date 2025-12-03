@@ -1,0 +1,77 @@
+using System;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Security;
+
+class Program
+{
+    static void Main()
+    {
+
+        string filePath = "E:\\04_Programmierung\\AdventOfCode2025\\Input.txt";
+        int lineNumber = 0;
+        List<int> checkNumbers = new List<int>();
+        long outputJoltage = 0;
+
+        try
+        {
+            using (StreamReader sr = new StreamReader(filePath))
+            {
+                lineNumber = File.ReadLines(filePath).Count();
+                int lineCounter;
+
+                for (int i = 0; i < lineNumber; i++)
+                {
+                    string actualLine = sr.ReadLine();
+                    char firstMax = actualLine[0];
+                    int indexNumber = actualLine.IndexOf(firstMax);
+                    string outputJoltageBank;
+                    int actualLineLength = actualLine.Length;
+
+                    for (int j = 0; j < actualLineLength -11; j++)
+                    {
+                        if (actualLine[j] > firstMax)
+                        {
+                            firstMax = actualLine[j];
+                            indexNumber = actualLine.IndexOf(firstMax);
+
+                        }
+                    }
+                    outputJoltageBank = firstMax.ToString();
+
+                    indexNumber++;
+                    char nextMax = actualLine[indexNumber];
+
+                    int counter = 10;
+                    int merker = 0;
+                    for (int m = 0; m < 11;m++)
+                    {
+                        nextMax = actualLine[indexNumber];
+                        merker = indexNumber;
+
+                        for (int j = indexNumber;indexNumber < actualLineLength - counter; indexNumber++)
+                        {
+                            if (actualLine[indexNumber] > nextMax)
+                            {
+                                nextMax = actualLine[indexNumber];
+                                merker = indexNumber;
+                            }
+                        }
+                        indexNumber = merker+ 1;
+                        counter--;
+                        outputJoltageBank += nextMax.ToString();
+                    }
+
+                    outputJoltage += Int64.Parse(outputJoltageBank);
+                    Console.WriteLine($"actualLineOutput{i+1}: {outputJoltageBank}");
+                }
+
+                Console.WriteLine("Password:" + outputJoltage);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Fehler: " + e.Message);
+        }
+    }
+}
