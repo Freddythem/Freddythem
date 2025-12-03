@@ -7,10 +7,8 @@ class Program
 {
     static void Main()
     {
-
         string filePath = "E:\\04_Programmierung\\AdventOfCode2025\\Input.txt";
         int lineNumber = 0;
-        List<int> checkNumbers = new List<int>();
         long outputJoltage = 0;
 
         try
@@ -18,38 +16,21 @@ class Program
             using (StreamReader sr = new StreamReader(filePath))
             {
                 lineNumber = File.ReadLines(filePath).Count();
-                int lineCounter;
 
                 for (int i = 0; i < lineNumber; i++)
                 {
                     string actualLine = sr.ReadLine();
-                    char firstMax = actualLine[0];
-                    int indexNumber = actualLine.IndexOf(firstMax);
-                    string outputJoltageBank;
-                    int actualLineLength = actualLine.Length;
-
-                    for (int j = 0; j < actualLineLength -11; j++)
-                    {
-                        if (actualLine[j] > firstMax)
-                        {
-                            firstMax = actualLine[j];
-                            indexNumber = actualLine.IndexOf(firstMax);
-
-                        }
-                    }
-                    outputJoltageBank = firstMax.ToString();
-
-                    indexNumber++;
+                    int indexNumber = 0;
+                    string outputJoltageBank = "";
                     char nextMax = actualLine[indexNumber];
-
-                    int counter = 10;
+                    int counter = 11;
                     int merker = 0;
-                    for (int m = 0; m < 11;m++)
+                    for (int m = 12; m > 0;m--)
                     {
                         nextMax = actualLine[indexNumber];
                         merker = indexNumber;
 
-                        for (int j = indexNumber;indexNumber < actualLineLength - counter; indexNumber++)
+                        for (int j = indexNumber;indexNumber < actualLine.Length - counter; indexNumber++)
                         {
                             if (actualLine[indexNumber] > nextMax)
                             {
@@ -61,7 +42,6 @@ class Program
                         counter--;
                         outputJoltageBank += nextMax.ToString();
                     }
-
                     outputJoltage += Int64.Parse(outputJoltageBank);
                     Console.WriteLine($"actualLineOutput{i+1}: {outputJoltageBank}");
                 }
