@@ -1,0 +1,63 @@
+using System;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Security;
+
+class Program
+{
+    static void Main()
+    {
+        string filePath = "E:\\04_Programmierung\\AdventOfCode2025\\Input.txt";
+        int lineNumber = 0;
+        List<int> checkNumbers = new List<int>();
+        int outputJoltage = 0;
+
+        try
+        {
+            using (StreamReader sr = new StreamReader(filePath))
+            {
+                lineNumber = File.ReadLines(filePath).Count();
+                int lineCounter;
+
+                for (int i = 0; i < lineNumber; i++)
+                {
+                    string actualLine = sr.ReadLine();
+                    char firstMax = actualLine[0];
+                    int indexNumber = actualLine.IndexOf(firstMax);
+
+                    for (int j = 0; j < actualLine.Length - 1; j++)
+                    {
+                        if (actualLine[j] > firstMax)
+                        {
+                            firstMax = actualLine[j];
+                            indexNumber = actualLine.IndexOf(firstMax);
+                        }
+                    }
+                 
+                    indexNumber++;
+                    char secondMax = actualLine[indexNumber];
+
+                    for (int j = indexNumber; indexNumber < actualLine.Length; indexNumber++)
+                    {
+                        if (actualLine[indexNumber] > secondMax)
+                        {
+                            secondMax = actualLine[indexNumber];
+
+                        }
+                    }
+
+                    string outputJoltageBank = firstMax.ToString() + secondMax.ToString();
+                    outputJoltage += Int32.Parse(outputJoltageBank);
+
+                    Console.WriteLine($"actualLineOutput{i+1}: {firstMax} + {secondMax} = {outputJoltageBank}");
+                }
+
+                Console.WriteLine("Password:" + outputJoltage);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Fehler: " + e.Message);
+        }
+    }
+}
