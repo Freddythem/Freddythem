@@ -1,0 +1,183 @@
+using System;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Security;
+
+class Program
+{
+    static void Main()
+    {
+        string filePath = "E:\\04_Programmierung\\AdventOfCode2025\\Input.txt";
+        int lineNumber = 0;
+        long numberOfPaperRolls = 0;
+
+        string[] inputFile;
+        char paperRoll = '@';
+        char emptyPlace = '.';
+
+        try
+        {
+            using (StreamReader sr = new StreamReader(filePath))
+            {
+                lineNumber = File.ReadLines(filePath).Count();
+                inputFile = new string[lineNumber];
+                int actualLineNumber = 0;
+
+                for (int i = 0; i < lineNumber; i += 1)
+                {
+                    inputFile[i] = sr.ReadLine();
+                }
+                Console.WriteLine($"Neues Programm. Alle Daten eingelesen. Zeilen: {lineNumber}\n");
+
+                for (int i = 0; i < lineNumber; i += 1)
+                {
+                    Console.WriteLine($"\n__________SearchBlock Line {i} bis {i + 2}__________");
+
+                    if (i > 0)
+                    {
+                        Console.WriteLine($"LineTop {i - 1}: {inputFile[i - 1]} ");
+                    }
+                    else
+                        Console.WriteLine($"LineTop ist leer ");
+
+                    Console.WriteLine($"LineMid {i}: {inputFile[i]} ");
+
+                    if (i < lineNumber - 1)
+                    {
+                        Console.WriteLine($"LineDown {i + 1}: {inputFile[i + 1]} ");
+                    }
+                    else
+                        Console.WriteLine($"LineDown ist leer ");
+
+
+                    int emptyPlacesNumber = 0;
+
+
+                    for (int j = 0; j < inputFile[i].Length; j++)
+                    {
+                        emptyPlacesNumber = 0;
+                        //Console.WriteLine($"for-Schleife start: Slot ");
+                        if (inputFile[i][j] == paperRoll)
+                        {
+                            Console.WriteLine($"PaperRoll an Position {j}");
+                            if (i > 0) // LineDrüber
+                            {
+                                if (j > 0)
+                                {
+                                    if (inputFile[i-1][j - 1] == emptyPlace)
+                                    {
+                                        emptyPlacesNumber++;
+                                        //Console.WriteLine($"Reihe drüber, Pos -1 ist leer, emptyPlaces +1, aktuell: {emptyPlacesNumber}");
+                                    }
+                                }
+                                else
+                                {
+                                    emptyPlacesNumber++;
+                                    //Console.WriteLine($"Reihe drüber, Pos -1 gibt es nicht, emptyPlaces +1, aktuell: {emptyPlacesNumber}");
+                                }
+
+                                if (j < inputFile[i-1].Length - 1)
+                                {
+                                    if (inputFile[i-1][j + 1] == emptyPlace)
+                                    {
+                                        emptyPlacesNumber++;
+                                        //Console.WriteLine($"Reihe drüber, Pos +1 ist leer, emptyPlaces +1, aktuell: {emptyPlacesNumber}");
+                                    }
+                                }
+                                else
+                                {
+                                    emptyPlacesNumber++;
+                                   // Console.WriteLine($"Reihe drüber, Pos +1 gibt es nicht, emptyPlaces +1, aktuell: {emptyPlacesNumber}");
+                                }
+
+                                if (inputFile[i-1][j - 0] == emptyPlace)
+                                {
+                                    emptyPlacesNumber++;
+                                   // Console.WriteLine($"Reihe drüber, Pos 0 ist leer, emptyPlaces +1, aktuell: {emptyPlacesNumber}");
+                                }
+                            }
+                            else
+                            {
+                                emptyPlacesNumber += 3;
+                               // Console.WriteLine($"Keine Reihe da drüber, emptyPlaces +3, aktuell: {emptyPlacesNumber}");
+                            }
+
+                            if (i < lineNumber - 1) //LineDrunter
+                            {
+                                if (j > 0)
+                                {
+                                    if (inputFile[i+1][j - 1] == emptyPlace)
+                                    {
+                                        emptyPlacesNumber++;
+                                    }
+                                }
+                                else
+                                {
+                                    emptyPlacesNumber++;
+                                }
+
+                                if (j < inputFile[i+1].Length - 1)
+                                {
+                                    if (inputFile[i+1][j + 1] == emptyPlace)
+                                    {
+                                        emptyPlacesNumber++;
+                                    }
+                                }
+                                else
+                                {
+                                    emptyPlacesNumber++;
+                                }
+
+                                if (inputFile[i+1][j - 0] == emptyPlace)
+                                {
+                                    emptyPlacesNumber++;
+                                }
+                            }
+                            else
+                            {
+                                emptyPlacesNumber += 3;
+                                //Console.WriteLine($"Keine Reihe drunter, emptyPlaces +3, aktuell: {emptyPlacesNumber}");
+                            }
+
+                            if (j > 0) //EigeneLine
+                            {
+                                if (inputFile[i][j - 1] == emptyPlace)
+                                    emptyPlacesNumber++;
+                            }
+                            else
+                            {
+                                emptyPlacesNumber++;
+                            }
+
+                            if (j < inputFile[i].Length - 1) //Eigene Line
+                            {
+                                if (inputFile[i][j + 1] == emptyPlace)
+                                    emptyPlacesNumber++;
+                            }
+                            else
+                            {
+                                emptyPlacesNumber++;
+                            }
+
+                            if (emptyPlacesNumber > 4)
+                            {
+                                numberOfPaperRolls++;
+                                Console.WriteLine($"Line {i}: und PaperRoll {j} hat {emptyPlacesNumber} emptyPlaces");
+                            }
+                            //else
+                               // Console.WriteLine($"Line {i}: und PaperRoll {j} hat {emptyPlacesNumber} emptyPlaces");
+                        }
+
+                    }
+
+                }
+
+                Console.WriteLine($"PaperRolls: {numberOfPaperRolls}");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Fehler: " + e.Message);
+        }
+    }
+}
