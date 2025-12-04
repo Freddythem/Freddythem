@@ -1,0 +1,173 @@
+using System;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Security;
+
+class Program
+{
+    static void Main()
+    {
+        string filePath = "E:\\04_Programmierung\\AdventOfCode2025\\Input.txt";
+        int lineNumberCount = 0;
+        long numberOfPaperRolls = 0;
+
+        string[] inputFile;
+        char paperRoll = '@';
+        char emptyPlace = '.';
+        char paperRollMarked = 'x';
+        int counterX = 0;
+        bool paperRollsRemoved = true;
+        int emptyPlacesNumber = 0;
+
+        try
+        {
+            using (StreamReader sr = new StreamReader(filePath))
+            {
+                lineNumberCount = File.ReadLines(filePath).Count();
+                inputFile = new string[lineNumberCount];
+                int actualLineNumber = 0;
+
+                for (int i = 0; i < lineNumberCount; i += 1)
+                {
+                    inputFile[i] = sr.ReadLine();
+                }
+                Console.WriteLine($"Neues Programm. Alle Daten eingelesen. Zeilen: {lineNumberCount}\n");
+
+                while (paperRollsRemoved)
+                {
+                    for (int lineNumber = 0; lineNumber < lineNumberCount; lineNumber += 1)
+                    {
+                        for (int charIndex = 0; charIndex < inputFile[lineNumber].Length; charIndex++)
+                        {
+                            emptyPlacesNumber = 0;
+                            if (inputFile[lineNumber][charIndex] == paperRoll)
+                            {
+                                if (lineNumber > 0) // LineDrüber
+                                {
+                                    if (charIndex > 0)
+                                    {
+                                        if (inputFile[lineNumber - 1][charIndex - 1] == emptyPlace)
+                                        {
+                                            emptyPlacesNumber++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        emptyPlacesNumber++;
+                                    }
+
+                                    if (charIndex < inputFile[lineNumber - 1].Length - 1)
+                                    {
+                                        if (inputFile[lineNumber - 1][charIndex + 1] == emptyPlace)
+                                        {
+                                            emptyPlacesNumber++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        emptyPlacesNumber++;
+                                    }
+
+                                    if (inputFile[lineNumber - 1][charIndex - 0] == emptyPlace)
+                                    {
+                                        emptyPlacesNumber++;
+                                    }
+                                }
+                                else
+                                {
+                                    emptyPlacesNumber += 3;
+                                }
+
+                                if (lineNumber < lineNumberCount - 1) //LineDrunter
+                                {
+                                    if (charIndex > 0)
+                                    {
+                                        if (inputFile[lineNumber + 1][charIndex - 1] == emptyPlace)
+                                        {
+                                            emptyPlacesNumber++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        emptyPlacesNumber++;
+                                    }
+
+                                    if (charIndex < inputFile[lineNumber + 1].Length - 1)
+                                    {
+                                        if (inputFile[lineNumber + 1][charIndex + 1] == emptyPlace)
+                                        {
+                                            emptyPlacesNumber++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        emptyPlacesNumber++;
+                                    }
+
+                                    if (inputFile[lineNumber + 1][charIndex - 0] == emptyPlace)
+                                    {
+                                        emptyPlacesNumber++;
+                                    }
+                                }
+                                else
+                                {
+                                    emptyPlacesNumber += 3;
+                                }
+
+                                if (charIndex > 0) //EigeneLine
+                                {
+                                    if (inputFile[lineNumber][charIndex - 1] == emptyPlace)
+                                        emptyPlacesNumber++;
+                                }
+                                else
+                                {
+                                    emptyPlacesNumber++;
+                                }
+
+                                if (charIndex < inputFile[lineNumber].Length - 1) //Eigene Line
+                                {
+                                    if (inputFile[lineNumber][charIndex + 1] == emptyPlace)
+                                        emptyPlacesNumber++;
+                                }
+                                else
+                                {
+                                    emptyPlacesNumber++;
+                                }
+
+                                if (emptyPlacesNumber > 4)
+                                {
+                                    numberOfPaperRolls++;
+                                    counterX++;
+                                    char[] c = inputFile[lineNumber].ToCharArray();
+                                    c[charIndex] = paperRollMarked;
+                                    inputFile[lineNumber] = new String(c);
+                                }
+                            }
+
+                        }
+                    }
+
+                    for (int i = 0; i < lineNumberCount; i += 1)
+                    {
+                        inputFile[i] = inputFile[i].Replace(paperRollMarked, emptyPlace);
+                    }
+
+                    if (counterX > 0)
+                    {
+                        paperRollsRemoved = true;
+                        counterX = 0;
+                    }
+                    else
+                    {
+                        paperRollsRemoved = false;
+                    }
+                }
+                Console.WriteLine($"\n Lösung: PaperRolls: {numberOfPaperRolls}");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Fehler: " + e.Message);
+        }
+    }
+}
