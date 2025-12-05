@@ -9,14 +9,13 @@ class Program
 {
     static void Main()
     {
-        string filePath = "C:\\Users\\meierf\\source\\repos\\ConsoleApp1\\ConsoleApp1\\Input.txt";
+        string filePath = "E:\\04_Programmierung\\AdventOfCode2025\\Input.txt";
         int lineNumber = 0;
         string[] inputFile;
 
         long numberOfFreshIngredients = 0;
 
         List<string> freshRanges = new List<string>();
-        List<long> freshIngredients = new List<long>();
 
         List<long> startIds = new List<long>();
         List<long> endIds = new List<long>();
@@ -58,7 +57,6 @@ class Program
                     endIds.Add(long.Parse(idRange[1]));
                 }
 
-
                 long idFirst = 0;
                 long idEnd = 0;
 
@@ -70,29 +68,23 @@ class Program
 
                     while (counter < startIds.Count)
                     {
-                        //Console.WriteLine($"counter: {counter} - i: {i} ");
-
                         if ((idEnd >= startIds[counter]) && idEnd < endIds[counter])
                         {
                             idEnd = endIds[counter];
                             counter = 0;
-                        }                    
-                        counter++;                    
+                        }
+                        counter++;
                     }
-                    //startIds.RemoveAt(counter);
-                    //endIds.RemoveAt(counter);
-                    if(endIds[i] != idEnd)
+
+                    if (endIds[i] != idEnd)
                     {
-                    Console.WriteLine($"Id-Ende {i} angepasst: {endIds[i]} jetzt {idEnd} ");
-                    endIds[i] = idEnd;
+                        endIds[i] = idEnd;
                     }
 
                     counter = 0;
 
                     while (counter < startIds.Count)
                     {
-                        //Console.WriteLine($"counter: {counter} - i: {i} ");
-
                         if ((idFirst <= endIds[counter]) && idFirst > startIds[counter])
                         {
                             idFirst = startIds[counter];
@@ -100,50 +92,36 @@ class Program
                         }
                         counter++;
                     }
-                    //startIds.RemoveAt(counter);
-                    //endIds.RemoveAt(counter);
+
                     if (startIds[i] != idFirst)
                     {
-                        Console.WriteLine($"Id-Start {i} angepasst: {startIds[i]} jetzt {idFirst} ");
                         startIds[i] = idFirst;
                     }
-
-
-
-
-                    //Console.WriteLine($"Id-Bereich: {startIds[i]} - {endIds[i]} ");
                 }
 
-
-                for (int i = 0; i < startIds.Count; i++)
+                for (int i = 1; i < startIds.Count; i++)
                 {
-                    int counter2 = 0;
-                    idFirst = startIds[i];
-                    idEnd = endIds[i];
-                    //Console.WriteLine($"checke ob bereich in bereich: {idFirst} - {idEnd} ");
-
-                    while (counter2 < startIds.Count)
+                    int counterFirst = i + 1;
+                    while (counterFirst < startIds.Count)
                     {
-                        if ((idFirst >= startIds[counter2]) && idEnd <= endIds[counter2])
+                        idFirst = startIds[i - 1];
+                        idEnd = endIds[i - 1];
+
+                        if (idFirst == startIds[counterFirst] && idEnd == endIds[counterFirst])
                         {
-                            Console.WriteLine($"Line: {i} startId {idFirst} >: {startIds[counter2]} / endId {idEnd} <: {endIds[counter2]}");
+                            startIds.RemoveAt(counterFirst);
+                            endIds.RemoveAt(counterFirst);
+                            counterFirst -= 1;
                         }
-                        counter2++;
+                        counterFirst++;
                     }
                 }
-
+            
                 for (int i = 0; i < startIds.Count; i++)
                 {
-                    long diff = (endIds[i] - startIds[i]) +1;
-                    if(diff < 0)
-                    {
-                        Console.WriteLine($"diff ist minus!: {diff}");
-                        break;
-                    }
-
+                    long diff = (endIds[i] - startIds[i]) + 1;
                     numberOfFreshIngredients += diff;
                 }
-
 
                 Console.WriteLine($"\nfreshIngredients: {numberOfFreshIngredients}");
             }
