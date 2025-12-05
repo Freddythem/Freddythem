@@ -81,9 +81,37 @@ class Program
                     }
                     //startIds.RemoveAt(counter);
                     //endIds.RemoveAt(counter);
+                    if(endIds[i] != idEnd)
+                    {
+                    Console.WriteLine($"Id-Ende {i} angepasst: {endIds[i]} jetzt {idEnd} ");
                     endIds[i] = idEnd;
+                    }
 
-                   //Console.WriteLine($"Id-Bereich: {startIds[i]} - {endIds[i]} ");
+                    counter = 0;
+
+                    while (counter < startIds.Count)
+                    {
+                        //Console.WriteLine($"counter: {counter} - i: {i} ");
+
+                        if ((idFirst <= endIds[counter]) && idFirst > startIds[counter])
+                        {
+                            idFirst = startIds[counter];
+                            counter = 0;
+                        }
+                        counter++;
+                    }
+                    //startIds.RemoveAt(counter);
+                    //endIds.RemoveAt(counter);
+                    if (startIds[i] != idFirst)
+                    {
+                        Console.WriteLine($"Id-Start {i} angepasst: {startIds[i]} jetzt {idFirst} ");
+                        startIds[i] = idFirst;
+                    }
+
+
+
+
+                    //Console.WriteLine($"Id-Bereich: {startIds[i]} - {endIds[i]} ");
                 }
 
 
@@ -94,15 +122,13 @@ class Program
                     idEnd = endIds[i];
                     //Console.WriteLine($"checke ob bereich in bereich: {idFirst} - {idEnd} ");
 
-                   // while (counter2 < startIds.Count)
+                    while (counter2 < startIds.Count)
                     {
                         if ((idFirst >= startIds[counter2]) && idEnd <= endIds[counter2])
                         {
-                            Console.WriteLine($"startId {idFirst} >: {startIds[counter2]}");
-                            Console.WriteLine($"endId {idEnd} <: {endIds[counter2]}");
-
+                            Console.WriteLine($"Line: {i} startId {idFirst} >: {startIds[counter2]} / endId {idEnd} <: {endIds[counter2]}");
                         }
-                        //counter2++;
+                        counter2++;
                     }
                 }
 
