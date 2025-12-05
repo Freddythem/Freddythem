@@ -1,0 +1,81 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Numerics;
+using System.Security;
+
+class Program
+{
+    static void Main()
+    {
+        string filePath = "C:\\Users\\meierf\\source\\repos\\ConsoleApp1\\ConsoleApp1\\Input.txt";
+        int lineNumber = 0;
+        string[] inputFile;
+
+        List<long> availableIngredients = new List<long>();
+        List<string> freshRanges = new List<string>();
+        List<long> freshIngredients = new List<long>();
+
+        try
+        {
+            using (StreamReader sr = new StreamReader(filePath))
+            {
+                lineNumber = File.ReadLines(filePath).Count();
+                inputFile = new string[lineNumber];
+                bool emptyLine = false;
+
+                for (int i = 0; i < lineNumber; i++)
+                {
+                    inputFile[i] = sr.ReadLine();
+                }
+
+                Console.WriteLine($"Neues Programm. Alle Daten aus Input.txt eingelesen. Zeilen: {lineNumber}\n");
+
+                for (int i = 0; i < inputFile.Length; i++)
+                {
+                    if (inputFile[i] == "")
+                    {
+                        emptyLine = true;
+                        i++;
+                    }
+                    if (!emptyLine)
+                    {
+                        freshRanges.Add(inputFile[i]);
+                    }
+                    if (emptyLine)
+                    {
+                        availableIngredients.Add(long.Parse(inputFile[i]));
+                    }
+                }
+
+                string[] idRange = new string[1];
+                long idMin = 0;
+                long idMax = 0;
+                long actualId = 0;
+
+                for (int j = 0; j < availableIngredients.Count; j++)
+                {                       
+                    actualId = availableIngredients[j];
+
+                    for (int i = 0; i < freshRanges.Count; i++)
+                    {
+                        idRange = freshRanges[i].Split("-");
+                        idMin = long.Parse(idRange[0]);
+                        idMax = long.Parse(idRange[1]);
+
+                        if (actualId >= idMin && actualId <= idMax)
+                        {
+                            freshIngredients.Add(actualId);
+                            break;
+                        }
+                    }
+                }
+                Console.WriteLine($"\nfreshIngredients: {freshIngredients.Count}");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Fehler: " + e.Message);
+        }
+    }
+}
