@@ -1,1 +1,138 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
+using System.Numerics;
+using System.Security;
+using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
+class Program
+{
+    static void Main()
+    {
+        //string filePath = "E:\\04_Programmierung\\AdventOfCode2025\\Input.txt"; //PC Ade
+        string filePath = "C:\\Users\\meierf\\source\\repos\\ConsoleApp1\\ConsoleApp1\\Input.txt"; //PC Goe
+        int lineNumber = 0;
+        int lineLength = 0;
+        string[] inputFile;
+        char[,] tannenbaumLaser; // 1 = spalten, 2 = zeilen
+        long[,] numberOfPathes;
+        long numberOfWays = 0;
+        int tachyonBeamSplitting = 0;
+
+        try
+        {
+            using (StreamReader sr = new StreamReader(filePath))
+            {
+                lineNumber = File.ReadLines(filePath).Count();
+
+                inputFile = new string[lineNumber];
+
+                for (int i = 0; i < lineNumber; i++)
+                {
+                    inputFile[i] = sr.ReadLine();
+                }
+                lineLength = inputFile[0].Length;
+
+                tannenbaumLaser = new char[lineLength, lineNumber];
+                numberOfPathes = new long[lineLength, lineNumber];
+
+                for (int i = 0; i < inputFile.Length; i++)
+                {
+                    for (int j = 0; j < inputFile[i].Length; j++)
+                    {
+                        tannenbaumLaser[j, i] = inputFile[i][j];
+
+                    }
+                }
+
+                //for (int i = 0; i < lineNumber; i++)
+                //{
+                //    for (int j = 0; j < lineLength; j++)
+                //    {
+                //        Console.Write($"{tannenbaumLaser[j, i]}");
+
+                //    }
+                //    Console.WriteLine($"");
+                //}
+
+                Console.WriteLine($"Neues Programm. Alle Daten aus Input.txt eingelesen. Zeilen: {lineNumber}\n");
+
+                for (int i = 0; i < lineNumber - 1; i++)
+                {
+                    for (int j = 0; j < lineLength; j++)
+                    {
+                        if (tannenbaumLaser[j, i] == 'S')
+                        {
+                            tannenbaumLaser[j, i + 1] = '|';
+                            numberOfPathes[j, i + 1] = 1;
+                        }
+
+                        if (tannenbaumLaser[j, i] == '|')
+                        {
+                            if (tannenbaumLaser[j, i + 1] == '.' || tannenbaumLaser[j, i + 1] == '|')
+                            {
+                                tannenbaumLaser[j, i + 1] = '|';
+                                numberOfPathes[j, i + 1] += numberOfPathes[j, i];
+
+                            }
+                            
+                            if (tannenbaumLaser[j, i + 1] == '^')
+                            {                                
+                                tannenbaumLaser[j - 1, i + 1] = '|';
+                                numberOfPathes[j - 1, i + 1] += numberOfPathes[j, i];
+
+                                tannenbaumLaser[j + 1, i + 1] = '|';
+                                numberOfPathes[j + 1, i + 1] += numberOfPathes[j, i];
+
+                                tachyonBeamSplitting++;                               
+                            }
+                        }
+                    }
+                }
+                //for (int i = 0; i < lineNumber; i++)
+                //{
+                //    Console.Write($"Z{i}: ");
+
+                //    for (int j = 0; j < lineLength; j++)
+                //    {
+                //        Console.Write($"{tannenbaumLaser[j, i]}");
+
+                //    }
+                //    Console.WriteLine($"");
+                //}
+                //Console.WriteLine($"");
+
+
+                //for (int i = 0; i < lineNumber; i++)
+                //{
+                //    Console.Write($"Z{i}: ");
+                //    for (int j = 0; j < lineLength; j++)
+                //    {
+                //        Console.Write($"{numberOfPathes[j, i]}");
+                        
+                //    }
+                //    Console.WriteLine($"");
+                //}
+
+                for (int i = 0; i < lineLength; i++)
+                {
+                    //Console.Write($"{numberOfPathes[i, lineNumber -1]},");
+                    numberOfWays += numberOfPathes[i, lineNumber - 1];
+                }
+
+
+                Console.WriteLine($"");
+
+                Console.WriteLine($"Endergebnis Splits:: {tachyonBeamSplitting}");
+                Console.WriteLine($"Endergebnis Wege:: {numberOfWays}");
+
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Fehler: " + e.Message);
+        }
+    }
+}
