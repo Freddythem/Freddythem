@@ -11,15 +11,18 @@ class Program
 {
     static void Main()
     {
-        //string filePath = "E:\\04_Programmierung\\AdventOfCode2025\\Input.txt"; //PC Ade
-        string filePath = "C:\\Users\\meierf\\source\\repos\\ConsoleApp1\\ConsoleApp1\\Input.txt"; //PC Goe
+        string filePath = "E:\\04_Programmierung\\AdventOfCode2025\\Input.txt"; //PC Ade
+        //string filePath = "C:\\Users\\meierf\\source\\repos\\ConsoleApp1\\ConsoleApp1\\Input.txt"; //PC Goe
         int lineNumber = 0;
         int lineLength = 0;
         string[][] inputFile;
+        long numberOfCircuits = 0;
 
         int numberOfPairs = 1000; // Test 10, sonst 1000!
-
-        long numberOfCircuits = 0;
+        if (filePath.Contains("InputTest"))
+        {
+            numberOfPairs = 10;
+        }
 
         try
         {
@@ -35,37 +38,32 @@ class Program
                 }
                 lineLength = inputFile[0].Length;
 
-                //Console.WriteLine($"inputFile.Length: {inputFile.Length} "); //länge Test: 20 (x,y,z)
-                // Console.WriteLine($"inputFile[0].Length: {inputFile[0].Length} "); //länge 3 (x,y,z)
-                // Console.WriteLine($"inputFile[0][0].Length: {inputFile[1][0].Length} "); //länge unterschiedlich
+                Console.WriteLine($"inputFile.Length: {inputFile.Length} "); //länge Test: 20 (x,y,z)
+                //Console.WriteLine($"inputFile[0].Length: {inputFile[0].Length} "); //länge 3 (x,y,z)
+                //Console.WriteLine($"inputFile[0][0].Length: {inputFile[1][0].Length} "); //länge unterschiedlich
 
-                Console.WriteLine($"\n");
+                //Console.WriteLine($"\n");
 
                 double x1 = 0, y1 = 0, z1 = 0;
                 double x2 = 0, y2 = 0, z2 = 0;
                 double distance = 0;
-                double closestDistance = 1000000;
-                double actualDistance = 0;
 
                 string[] pairOne = new string[2];
                 string[] pairTwo = new string[2];
 
                 List<double> distancesList = new List<double>();
 
-                List<List<string[]>> bigList = new List<List<string[]>>(); //Liste einer Liste mit Strings. bigList[0] = Liste 1. bigList[0][0] = Liste 1, Eintrag 1?
+                List<List<string[]>> bigList = new List<List<string[]>>(); //Liste einer Liste mit Strings. bigList[0] = Liste 1. bigList[0][0] = Liste 1, Eintrag 1
                 List<string[]> listDistance = new List<string[]>();
                 bigList.Add(listDistance);
 
-                Console.WriteLine($"bigList.Count: {bigList.Count}");
-
-                for (int i = 0; i < lineNumber - 1; i++)
+                for (int i = 0; i < lineNumber ; i++)
                 {
                     pairOne = inputFile[i];
 
                     x1 = int.Parse(pairOne[0]);
                     y1 = int.Parse(pairOne[1]);
                     z1 = int.Parse(pairOne[2]);
-
 
                     for (int j = i + 1; j < lineNumber; j++)
                     {
@@ -81,24 +79,28 @@ class Program
                 }
 
                 distancesList.Sort();
+                //Console.WriteLine($"Liste Entfernungen. {distancesList.Count} Stück");
+
                 distancesList.RemoveRange(numberOfPairs, distancesList.Count - numberOfPairs);
+                //Console.WriteLine($"Liste Entfernungen. Gekürzt noch {distancesList.Count} Stück");
 
-                //Console.WriteLine($"Liste Entfernungen:");
-                for (int i = 0; i < distancesList.Count; i++)
-                {
-                    //Console.WriteLine($"{i}: {distancesList[i]:F3}");
-                }
 
-                int counterTestIf = 0;
+                //Console.WriteLine($"Liste Entfernungen sortiert und reduziert: ");
+                //for (int i = 0; i < distancesList.Count; i++)
+                //{
+                //    Console.WriteLine($"{i}: {distancesList[i]:F3}");
+                //}
 
-                for (int i = 0; i < lineNumber - 1; i++)
+                int counterCheckLists = 0;
+                int counterHowMuchDistanceContains = 0;
+
+                for (int i = 0; i < lineNumber; i++)
                 {
                     pairOne = inputFile[i];
 
                     x1 = int.Parse(pairOne[0]);
                     y1 = int.Parse(pairOne[1]);
                     z1 = int.Parse(pairOne[2]);
-
 
                     for (int j = i + 1; j < lineNumber; j++)
                     {
@@ -111,88 +113,123 @@ class Program
                         distance = CalculateDistance3D(x1, y1, z1, x2, y2, z2);
 
                         if (distancesList.Contains(distance))
-                        {   
-                            counterTestIf++;
-                            //Console.WriteLine($"Counter getriggert: {counterTestIf}");
-                            int counterCheckLists = 0;
+                        {
+                            counterHowMuchDistanceContains++;
+                            counterCheckLists = 0;
+
                             bool distanceInAnyList = false;
+
+
                             for (int l = 0; l < bigList.Count; l++)
                             {
-                               
+                                //distanceInAnyList = false;
+
                                 if (bigList[l].Contains(pairOne))
                                 {
-                                    //Console.WriteLine($"biglist{l} contains pairOne");
-                                    if (!bigList[l].Contains(pairTwo))
+                                    for (int n = 0; n < bigList.Count; n++)
                                     {
-                                        //Console.Write($" aber nicht pairTwo");
-                                        bigList[l].Add(pairTwo);
+                                        if (bigList[n].Contains(pairOne))
+                                        {
+                                            bigList[l].AddRange(bigList[n]);
+                                            bigList[n].Clear();
+                                            //n = 0;
+                                        }
+                                        else
+                                        {
+                                            bigList[l].Add(pairTwo);
+                                            break;
+                                        }
                                     }
                                     distanceInAnyList = true;
-                                }
-                                else if(bigList[l].Contains(pairTwo))
+
+                                }                                
+                                else if (bigList[l].Contains(pairTwo))
                                 {
-                                    //Console.WriteLine($"biglist{l} contains pairTwo");
-                                    if (!bigList[l].Contains(pairOne))
+                                    for (int n = 0; n < bigList.Count; n++)
                                     {
-                                        //Console.Write($" aber nicht pairOne");
-                                        bigList[l].Add(pairOne);
+                                        if (bigList[n].Contains(pairOne))
+                                        {
+                                            bigList[l].AddRange(bigList[n]);
+                                            bigList[n].Clear();
+                                            //n = 0;
+                                            
+                                        }
+                                        else
+                                        {
+                                            bigList[l].Add(pairOne);
+                                            break;
+                                        }
                                     }
                                     distanceInAnyList = true;
                                 }
-                                
+                                if (distanceInAnyList)
+                                    break;
+
                                 counterCheckLists++;
 
-                                if(counterCheckLists == bigList.Count)
+                                if (counterCheckLists == bigList.Count)
                                 {
-                                    //Console.WriteLine($"if-check in for-Schleife: {l} von {bigList.Count}");
                                     if (!distanceInAnyList)
                                     {
-                                        //Console.WriteLine($"biglist{l} contains beides nicht!");
                                         listDistance = new List<string[]>();
                                         bigList.Add(listDistance);
                                         bigList[l + 1].Add(pairTwo);
                                         bigList[l + 1].Add(pairOne);
-
                                         break;
                                     }
                                 }
+
+
+
                             }
                         }
                     }
                 }
-                //Console.WriteLine($"BigList Entfernungen:");
+                Console.WriteLine($"CounterHowMuchDistanceContains: {counterHowMuchDistanceContains}");
+
+                // Alle Listen in BigList durchgehen. 
+                // biglist[i][l] prüfen ob in irgendeiner Liste. Wenn ja, diese Liste X in Liste i schieben und leeren. 
+
+                Console.WriteLine($"BigList Entfernungen:");
                 for (int i = 0; i < bigList.Count; i++)
                 {
-                   // Console.WriteLine($"BigList Liste {i}: ");
+                    Console.WriteLine($"BigList Liste {i}, Länge {bigList[i].Count}: ");
                     for (int j = 0; j < bigList[i].Count; j++)
                     {
-                       // Console.Write($"BigList Liste {i} Eintrag {j}: ");
+                        Console.Write($"BigList Liste {i} Eintrag {j}: ");
                         for (int k = 0; k < bigList[i][j].Length; k++)
                         {
-                            //Console.Write($"{bigList[i][j][k]} ");
+                            Console.Write($"{bigList[i][j][k]} ");
                         }
-                        //Console.WriteLine($"");
+                        Console.WriteLine($"");
                     }
                 }
 
-                List<int> countBigListLength = new List<int>();
+                List<int> countListOfCircuits = new List<int>();
+
+                int counterOfAllCoordinatesInBigList = 0;
 
                 for (int i = 0; i < bigList.Count; i++)
                 {
-                    countBigListLength.Add(bigList[i].Count);
+                    countListOfCircuits.Add(bigList[i].Count);
+                    counterOfAllCoordinatesInBigList += bigList[i].Count;
                 }
 
-                countBigListLength.Sort();
+                Console.WriteLine($"counterOfAllCoordinatesInBigList: {counterOfAllCoordinatesInBigList}");
 
-                for (int i = countBigListLength.Count - 1; i >= countBigListLength.Count - 3; i--)
+
+                countListOfCircuits.Sort();
+           
+                for (int i = countListOfCircuits.Count - 1; i >= countListOfCircuits.Count - 1; i--)
                 {
-                    Console.WriteLine($"countBigListLength: {countBigListLength[i]}");
+                    Console.WriteLine($"countBigListLength: {countListOfCircuits[i]}");
                 }
 
-                //Console.WriteLine($"\nKürzeste Entfernung: {closestDistance:F3} zwischen {pairOne[0]},{pairOne[1]},{pairOne[2]} und {pairTwo[0]},{pairTwo[1]},{pairTwo[2]}");
-                numberOfCircuits = countBigListLength[countBigListLength.Count - 1] * countBigListLength[countBigListLength.Count - 2] * countBigListLength[countBigListLength.Count - 3];
-                Console.WriteLine($"\n Endergebnis Wege:: {countBigListLength[countBigListLength.Count - 1]} * {countBigListLength[countBigListLength.Count - 2]} * {countBigListLength[countBigListLength.Count - 3]} = {numberOfCircuits}");
+                numberOfCircuits = countListOfCircuits[countListOfCircuits.Count - 1] * countListOfCircuits[countListOfCircuits.Count - 2] * countListOfCircuits[countListOfCircuits.Count - 3];
+
+                Console.WriteLine($"\n Endergebnis Wege:: {countListOfCircuits[countListOfCircuits.Count - 1]} * {countListOfCircuits[countListOfCircuits.Count - 2]} * {countListOfCircuits[countListOfCircuits.Count - 3]} = {numberOfCircuits}");
                 // 7920 ist zu klein. Schade, beim Test hat es funktioniert.
+                // 230 Listen, 1220 Einträge. Da sind doppelte bei. Warum?  
             }
         }
         catch (Exception e)
@@ -201,12 +238,10 @@ class Program
         }
     }
 
-
     static double CalculateDistance3D(double x1, double y1, double z1, double x2, double y2, double z2)
     {
         return Math.Sqrt(Math.Pow(x2 - x1, 2) +
                          Math.Pow(y2 - y1, 2) +
                          Math.Pow(z2 - z1, 2));
     }
-
 }
