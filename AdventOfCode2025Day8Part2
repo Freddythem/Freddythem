@@ -1,7 +1,3 @@
-/*
-KEINE FUNKTION FÜR PART2 !
-Steht hier nur drin für die Vollständigkeit. Zum Zeitpunkt der Bearbeitung fehlt Wissen um die Aufgabe vernünftig zu lösen. 
-*/
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,6 +17,7 @@ class Program
         int lineNumber = 0;
         int lineLength = 0;
         string[][] inputFile;
+        int counterDistancesChecked = 0;
 
         int numberOfPairs = 1000; // Test 10, sonst 1000!
         if (filePath.Contains("Test"))
@@ -28,6 +25,7 @@ class Program
             numberOfPairs = 10;
         }
 
+        double lastConnectedXMulti = 0;
         long numberOfCircuits = 0;
 
         try
@@ -44,10 +42,6 @@ class Program
                 }
                 lineLength = inputFile[0].Length;
 
-                //Console.WriteLine($"inputFile.Length: {inputFile.Length} "); //länge Test: 20 (x,y,z)
-                // Console.WriteLine($"inputFile[0].Length: {inputFile[0].Length} "); //länge 3 (x,y,z)
-                // Console.WriteLine($"inputFile[0][0].Length: {inputFile[1][0].Length} "); //länge unterschiedlich
-
                 Console.WriteLine($"\n");
 
                 double x1 = 0, y1 = 0, z1 = 0;
@@ -56,16 +50,17 @@ class Program
 
                 string[] pairOne = new string[2];
                 string[] pairTwo = new string[2];
+                double[] pairOneTest = new double[3] { 0, 0, 0 };
+                double[] pairTwoTest = new double[3] { 0, 0, 0 };
 
                 List<double> distancesList = new List<double>();
 
-                List<double[]> tolleKomplexeListeFuckOff = new List<double[]>(); //spielzeug. nicht genutzt
+                List<double[]> tolleKomplexeListeFuckOff = new List<double[]>();
+                List<List<double[]>> fuckingBigList = new List<List<double[]>>();
 
-                List<List<string[]>> bigList = new List<List<string[]>>(); //Liste einer Liste mit Strings. bigList[0] = Liste 1. bigList[0][0] = Liste 1, Eintrag 1?
-                List<string[]> listDistance = new List<string[]>();
-                bigList.Add(listDistance);
-
-                Console.WriteLine($"bigList.Count: {bigList.Count}");
+                List<double[]> listDistanceForFUckingBigList = new List<double[]>();
+                fuckingBigList.Add(listDistanceForFUckingBigList);
+               
 
                 for (int i = 0; i < lineNumber - 1; i++)
                 {
@@ -84,148 +79,100 @@ class Program
                         z2 = int.Parse(pairTwo[2]);
 
                         distance = CalculateDistance3D(x1, y1, z1, x2, y2, z2);
-                        distancesList.Add(distance);
 
                         double[] doubleForFuckingList = new double[7] { distance, x1, y1, z1, x2, y2, z2 }; //spielzeug. nicht genutzt
                         tolleKomplexeListeFuckOff.Add(doubleForFuckingList); //spielzeug. nicht genutzt
                     }
                 }
 
-                distancesList.Sort();
-
                 tolleKomplexeListeFuckOff.Sort((a, b) => a[0].CompareTo(b[0]));
-                
-                /*
-                // tolleKomplexeListeFuckOff nehmen
-                // 1. Eintrag in bigList[0] packen.
-                // 2. Eintrag prüfen ob x1 od. 2 vorhanden.
-                // wenn ja, in bestehende liste packen, wenn nein, in neue liste.
-                // usw bis 1000.
-                // eigentich bis hier hin so wie unten?
-                // und dann bei jedem weiteren eintrag so weiter bis alle listen soweit zusammengeschoben, dass nurnoch eine große existiert?                               
-                 */
 
                 Console.WriteLine($"Bis hier läufts easy mit berechnen :) ");
-                
-                distancesList.RemoveRange(numberOfPairs, distancesList.Count - numberOfPairs);
 
-                int counterDistancesChecked = 0;
+                bool numberOfPairsReached = false;
 
-                for (int i = 0; i < lineNumber - 1; i++)
+                for (int i = 0; i < tolleKomplexeListeFuckOff.Count; i++)
                 {
-                    pairOne = inputFile[i];
+                    counterDistancesChecked++;
 
-                    x1 = int.Parse(pairOne[0]);
-                    y1 = int.Parse(pairOne[1]);
-                    z1 = int.Parse(pairOne[2]);
+                    pairOneTest = new double[3] { tolleKomplexeListeFuckOff[i][1], tolleKomplexeListeFuckOff[i][2], tolleKomplexeListeFuckOff[i][3] };
+                    pairTwoTest = new double[3] { tolleKomplexeListeFuckOff[i][4], tolleKomplexeListeFuckOff[i][5], tolleKomplexeListeFuckOff[i][6] };
 
+                    //Console.WriteLine($"Pos.{i} : {pairOneTest[0]}, {pairOneTest[1]}, {pairOneTest[2]}, und {pairTwoTest[0]},{pairTwoTest[1]},{pairTwoTest[2]} , Enter für weiter");
+                    //Console.ReadLine();
 
-                    for (int j = i + 1; j < lineNumber; j++)
+                    int counterCheckLists = 0;
+                    bool distanceInAnyList = false;
+
+                    for (int l = 0; l < fuckingBigList.Count; l++)
                     {
-                        pairTwo = inputFile[j];
 
-                        x2 = int.Parse(pairTwo[0]);
-                        y2 = int.Parse(pairTwo[1]);
-                        z2 = int.Parse(pairTwo[2]);
-
-                        distance = CalculateDistance3D(x1, y1, z1, x2, y2, z2);
-
-                        if (distancesList.Contains(distance))
+                        if (fuckingBigList[l].Any(a => a.SequenceEqual(pairOneTest)))
                         {
-                            counterDistancesChecked++;
-                            int counterCheckLists = 0;
-                            bool distanceInAnyList = false;
-
-                            for (int l = 0; l < bigList.Count; l++)
+                            if (!fuckingBigList[l].Any(a => a.SequenceEqual(pairTwoTest)))
                             {
-                                for (int m = 0; m < bigList.Count; m++)
+                                fuckingBigList[l].Add(pairTwoTest);
+                            }
+                            distanceInAnyList = true;
+                        }
+                        else if (fuckingBigList[l].Any(a => a.SequenceEqual(pairTwoTest)))
+                        {
+                            if (!fuckingBigList[l].Any(a => a.SequenceEqual(pairOneTest)))
+                            {
+                                fuckingBigList[l].Add(pairOneTest);
+                            }
+                            distanceInAnyList = true;
+                        }
+
+                        counterCheckLists++;
+
+                        if (counterCheckLists == fuckingBigList.Count)
+                        {
+                            if (!distanceInAnyList)
+                            {
+                                listDistanceForFUckingBigList = new List<double[]>();
+                                fuckingBigList.Add(listDistanceForFUckingBigList);
+                                fuckingBigList[l + 1].Add(pairOneTest);
+                                fuckingBigList[l + 1].Add(pairTwoTest);
+                            }
+                        }
+
+                        for (int m = 0; m < fuckingBigList.Count; m++)
+                        {
+                            if (l != m)
+                            {
+                                if (fuckingBigList[l].Any(item1 => fuckingBigList[m].Any(item2 => item1.SequenceEqual(item2))))
                                 {
-                                    if (l != m)
+                                    foreach (var arr in fuckingBigList[m])
                                     {
-                                        if (bigList[l].Any(item1 => bigList[m].Any(item2 => item1.SequenceEqual(item2))))
+                                        if (!fuckingBigList[l].Any(a => a.SequenceEqual(arr)))
                                         {
-                                            foreach (var arr in bigList[m])
-                                            {
-                                                if (!bigList[l].Any(a => a.SequenceEqual(arr)))
-                                                {
-                                                    bigList[l].Add(arr);
-                                                }
-                                            }
-                                            bigList[m].Clear();
-                                            m = 0;
+                                            fuckingBigList[l].Add(arr);
                                         }
                                     }
+                                    fuckingBigList[m].Clear();
+
+                                    m -= 1;
                                 }
+                            }
+                        }
 
-                                if (bigList[l].Contains(pairOne))
+                        if (counterDistancesChecked >= numberOfPairs)
+                        {                        
+                            for (int c = 0; c < fuckingBigList.Count; c++)
+                            {
+                                if (fuckingBigList[c].Count == (lineNumber))
                                 {
-                                    if (!bigList[l].Contains(pairTwo))
-                                    {
-                                        bigList[l].Add(pairTwo);
-                                    }
-                                    distanceInAnyList = true;
-                                }
-                                else if (bigList[l].Contains(pairTwo))
-                                {
-                                    if (!bigList[l].Contains(pairOne))
-                                    {
-                                        bigList[l].Add(pairOne);
-                                    }
-                                    distanceInAnyList = true;
-                                }
+                                    lastConnectedXMulti = pairOneTest[0] * pairTwoTest[0];
+                                    i = tolleKomplexeListeFuckOff.Count;
 
-                                counterCheckLists++;
-
-                                if (counterCheckLists == bigList.Count)
-                                {
-                                    if (!distanceInAnyList)
-                                    {
-                                        listDistance = new List<string[]>();
-                                        bigList.Add(listDistance);
-                                        bigList[l + 1].Add(pairTwo);
-                                        bigList[l + 1].Add(pairOne);
-
-                                        break;
-                                    }
                                 }
                             }
                         }
                     }
+
                 }
-
-
-                List<int> countListOfCircuits = new List<int>();
-
-                int counterOfAllCoordinatesInBigList = 0;
-
-                for (int i = 0; i < bigList.Count; i++)
-                {
-                    counterOfAllCoordinatesInBigList += bigList[i].Count;
-                    if (bigList[i].Count > 0)
-                    {
-                        countListOfCircuits.Add(bigList[i].Count);
-                    }
-                }
-
-                Console.WriteLine($"countListOfCircuits: {countListOfCircuits.Count}");
-
-                Console.WriteLine($"counterOfAllCoordinatesInBigList: {counterOfAllCoordinatesInBigList}");
-
-                countListOfCircuits.Sort();
-
-                //for (int i = countListOfCircuits.Count - 1; i >= countListOfCircuits.Count - 1; i--)
-                //{
-                //    Console.WriteLine($"countBigListLength: {countListOfCircuits[i]}");
-                //}
-
-                numberOfCircuits = countListOfCircuits[countListOfCircuits.Count - 1]
-                                    * countListOfCircuits[countListOfCircuits.Count - 2]
-                                    * countListOfCircuits[countListOfCircuits.Count - 3];
-
-                Console.WriteLine($"\n Endergebnis Wege::    {countListOfCircuits[countListOfCircuits.Count - 1]}" +
-                                                        $" * {countListOfCircuits[countListOfCircuits.Count - 2]}" +
-                                                        $" * {countListOfCircuits[countListOfCircuits.Count - 3]} = {numberOfCircuits}");
-                 
+                Console.WriteLine($"\n Endergebnis X-Koordinaten des letzten Paares multipliziert: {lastConnectedXMulti}");               
             }
         }
         catch (Exception e)
@@ -233,7 +180,6 @@ class Program
             Console.WriteLine("Fehler: " + e.Message);
         }
     }
-
 
     static double CalculateDistance3D(double x1, double y1, double z1, double x2, double y2, double z2)
     {
